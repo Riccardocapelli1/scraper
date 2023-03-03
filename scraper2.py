@@ -185,19 +185,20 @@ for job in jobs_prompt:
             #close the browser
             browser.quit()
             
+            job_data = pd.DataFrame({
+                'Date': date,
+                'Company': company_name,
+                'Title': job_title,
+                'Location': location,
+                'Description': jd,
+                'Level': seniority,
+                'Type': emp_type,
+                'Function': job_func,
+                'Industry': job_ind,
+                'Link': job_link
+            })
 
-        job_data = pd.DataFrame({
-            'Date': date,
-            'Company': company_name,
-            'Title': job_title,
-            'Location': location,
-            'Description': jd,
-            'Level': seniority,
-            'Type': emp_type,
-            'Function': job_func,
-            'Industry': job_ind,
-            'Link': job_link
-        })
-
-        # save the dataframe to csv
-        job_data.to_csv(filename, index=False)
+            job_data_print = job_data.append(job_data)
+            
+            # save the dataframe to csv
+            job_data_print.to_csv(filename, index=False)
