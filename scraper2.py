@@ -4,11 +4,10 @@ from bs4 import BeautifulSoup
 import time
 import pandas as pd
 
-jobs_prompt = ['Analista Dati']
+jobs_prompt = ['Vendite','Analisi Dei Dati']
 locations = ['Reggio','Verona']
 
-job_head = []
-job_detail = []
+job_data = []
 
 for job in jobs_prompt:
     for location in locations:
@@ -80,7 +79,7 @@ for job in jobs_prompt:
 
         #We get a list containing all jobs that we have found.
         job_lists = browser.find_element(By.CLASS_NAME,"jobs-search__results-list")
-        jobs_tags = job_lists.find_elements(By.TAG_NAME,"li") # return a list
+        jobs = job_lists.find_elements(By.TAG_NAME,"li") # return a list
 
         #We declare void list to keep track of all obtaind data.
         job_title_list = []
@@ -88,18 +87,13 @@ for job in jobs_prompt:
         location_list = []
         date_list = []
         job_link_list = []
-        date_print = []
-        company_name_print = []
-        job_title_print = []
-        location_print = []
-        job_link_print = []
-            
+
         #We loof over every job_element and obtain all the wanted info.
-        for job_element in jobs_tags:
+        for job_element in jobs:
             #job_title
             job_title = job_element.find_element(By.CSS_SELECTOR,"h3").get_attribute("innerText")
             job_title_list.append(job_title)
-           
+            
             #company_name
             company_name = job_element.find_element(By.CSS_SELECTOR,"h4").get_attribute("innerText")
             company_name_list.append(company_name)
@@ -116,30 +110,12 @@ for job in jobs_prompt:
             job_link = job_element.find_element(By.CSS_SELECTOR,"a").get_attribute("href")
             job_link_list.append(job_link)
 
-            print(job_title)
-            
-            date_print = date
-            company_name_print = company_name
-            job_title_print = job_title
-            location_print = location
-            job_link_print = job_link
-            
-                    
-            job_head = pd.DataFrame({
-                'Date': date_print,
-                'Company': company_name_print,
-                'Title': job_title_print,
-                'Location': location_print,
-                'Link': job_link
-            })
-
         jd = [] #job_description
         seniority = []
         emp_type = []
         job_func = []
         job_ind = []
-        
-        for item in range(len(jobs_tags)):
+        for item in range(len(jobs)):
             print(item)
             job_func0=[]
             industries0=[]
@@ -203,18 +179,20 @@ for job in jobs_prompt:
                 job_ind.append(None)
                 pass
             
-            print("Current at: ", item, "Percentage at: ", (item+1)/len(jobs_tags)*100, "%")
-        
-        job_detail = pd.DataFrame({
+            print("Current at: ", item, "Percentage at: ", (item+1)/len(jobs)*100, "%")
+
+        job_data = pd.DataFrame({
+            'Date': date,
+            'Company': company_name,
+            'Title': job_title,
+            'Location': location,
             'Description': jd,
             'Level': seniority,
             'Type': emp_type,
             'Function': job_func,
-            'Industry': job_ind
+            'Industry': job_ind,
+            'Link': job_link
         })
-        
-        #close the browser
-        browser.quit()
-    
-    # .to_csave the dataframe to csv
-    job_detail.to_csv(filename, index=False)
+
+    # save the dataframe to csv
+    job_data.to_csv(filename, index=False)
