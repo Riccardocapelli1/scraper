@@ -4,10 +4,11 @@ from bs4 import BeautifulSoup
 import time
 import pandas as pd
 
-jobs_prompt = ['Analisi Dei Dati','Vendite']
-locations = ['Reggio','Verona']
+#jobs_prompt = ['dbt','SSIS','Analytics Engineer','Data Analyst']
+#locations = ['Amsterdam','Berlino','Barcellona']
 
-job_data = []
+jobs_prompt = ['Analisi dei Dati','Vendite']
+locations = ['Reggio','Verona']
 
 for job in jobs_prompt:
     for location in locations:
@@ -87,7 +88,7 @@ for job in jobs_prompt:
         location_list = []
         date_list = []
         job_link_list = []
-
+        
         #We loof over every job_element and obtain all the wanted info.
         for job_element in jobs_tags:
             #job_title
@@ -180,6 +181,10 @@ for job in jobs_prompt:
                 pass
             
             print("Current at: ", item, "Percentage at: ", (item+1)/len(jobs_tags)*100, "%")
+
+            #close the browser
+            browser.quit()
+            
 
         job_data = pd.DataFrame({
             'Date': date,
