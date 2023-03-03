@@ -4,7 +4,7 @@ from bs4 import BeautifulSoup
 import time
 import pandas as pd
 
-jobs_prompt = ['Vendite','Analisi Dei Dati']
+jobs_prompt = ['Analisi Dei Dati','Vendite']
 locations = ['Reggio','Verona']
 
 job_data = []
@@ -39,7 +39,7 @@ for job in jobs_prompt:
         elif "Reggio" in country_url:
             geoId = "102687173"
         elif "Verona" in country_url:
-            geoId = "90009971"   
+            geoId = "102557975"   
 
 
         url = "https://www.linkedin.com/jobs/{0}-jobs-{1}?keywords={2}&location={3}&locationId=&geoId={4}&f_TPR=r86400&distance=25&position=1&pageNum=0".format(job_name.lower().replace(" ", "-"), country_name.lower().replace(" ", "-"), job_url, country_url, geoId)
@@ -79,7 +79,7 @@ for job in jobs_prompt:
 
         #We get a list containing all jobs that we have found.
         job_lists = browser.find_element(By.CLASS_NAME,"jobs-search__results-list")
-        jobs = job_lists.find_elements(By.TAG_NAME,"li") # return a list
+        jobs_tags = job_lists.find_elements(By.TAG_NAME,"li") # return a list
 
         #We declare void list to keep track of all obtaind data.
         job_title_list = []
@@ -89,7 +89,7 @@ for job in jobs_prompt:
         job_link_list = []
 
         #We loof over every job_element and obtain all the wanted info.
-        for job_element in jobs:
+        for job_element in jobs_tags:
             #job_title
             job_title = job_element.find_element(By.CSS_SELECTOR,"h3").get_attribute("innerText")
             job_title_list.append(job_title)
@@ -115,7 +115,7 @@ for job in jobs_prompt:
         emp_type = []
         job_func = []
         job_ind = []
-        for item in range(len(jobs)):
+        for item in range(len(jobs_tags)):
             print(item)
             job_func0=[]
             industries0=[]
@@ -179,7 +179,7 @@ for job in jobs_prompt:
                 job_ind.append(None)
                 pass
             
-            print("Current at: ", item, "Percentage at: ", (item+1)/len(jobs)*100, "%")
+            print("Current at: ", item, "Percentage at: ", (item+1)/len(jobs_tags)*100, "%")
 
         job_data = pd.DataFrame({
             'Date': date,
@@ -194,5 +194,5 @@ for job in jobs_prompt:
             'Link': job_link
         })
 
-    # save the dataframe to csv
-    job_data.to_csv(filename, index=False)
+        # save the dataframe to csv
+        job_data.to_csv(filename, index=False)
