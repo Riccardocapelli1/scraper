@@ -178,21 +178,21 @@ for job in jobs:
                     job_ind.append(None)
                     pass
                 
-        print("Current at: ", item, "Percentage at: ", (item+1)/len(jobs)*100, "%")
+            print("Current at: ", item, "Percentage at: ", (item+1)/len(jobs)*100, "%")
 
-        job_data = pd.DataFrame({
-            'Date': date,
-            'Company': company_name,
-            'Title': job_title,
-            'Location': location,
-            'Description': jd,
-            'Level': seniority,
-            'Type': emp_type,
-            'Function': job_func,
-            'Industry': job_ind,
-            'Link': job_link
-        })
+            job_data = pd.DataFrame({
+                'Date': date,
+                'Company': company_name,
+                'Title': job_title,
+                'Location': location,
+                'Description': jd,
+                'Level': seniority,
+                'Type': emp_type,
+                'Function': job_func,
+                'Industry': job_ind,
+                'Link': job_link
+            })
 
-        # save the dataframe to csv
-        job_data.to_csv(filename, index=False)
-#.
+    # save the dataframe to csv
+    job_data.to_csv(filename, index=False)
+
