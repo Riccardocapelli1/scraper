@@ -193,6 +193,6 @@ for job in jobs:
                 'Link': job_link
             })
 
-    # save the dataframe to csv
-    job_data.to_csv(filename, index=False)
+        # save the dataframe to csv
+        job_data.to_csv(filename, index=False)
 

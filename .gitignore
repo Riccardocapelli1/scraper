@@ -1,3 +1,4 @@
 *.csv
 *.log
 \test_data\*
+geckodriver.log
