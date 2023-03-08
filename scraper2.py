@@ -1,35 +1,42 @@
+# Import required libraries
 from selenium import webdriver
 from selenium.webdriver.common.by import By
 from bs4 import BeautifulSoup
 import time
 import pandas as pd
 
+# Define job and location prompts to search
 #jobs_prompt = ['dbt','SSIS','Analytics Engineer','Data Analyst']
 #locations = ['Amsterdam','Berlino','Barcellona']
 
+# Define job and location prompts to search
 jobs_prompt = ['Analisi dei Dati','Vendite']
 locations = ['Reggio','Verona']
 
+# Loop through each job and location
 for job in jobs_prompt:
     for location in locations:
         job_name = job
         country_name = location
+        
+        # Define filename to save results to
         filename = f"{job_name.lower().replace(' ', '-')}_{country_name.lower().replace(' ', '-')}_{time.strftime('%d-%m-%Y')}.csv"
 
-        job_url = "";
+        # Create URL to search for jobs
+        job_url = ""
         for item in job_name.split(" "):
             if item != job_name.split(" ")[-1]:
                 job_url = job_url + item + "%20"
             else:
                 job_url = job_url + item
-
-        country_url = "";
+        country_url = ""
         for item in country_name.split(" "):
             if item != country_name.split(" ")[-1]:
                 country_url = country_url + item + "%20"
             else:
                 country_url = country_url + item
 
+        # Assign a geoId to the country based on location
         geoId = ""
         if "Amsterdam" in country_url:
             geoId = "103100785"
@@ -42,41 +49,38 @@ for job in jobs_prompt:
         elif "Verona" in country_url:
             geoId = "102557975"   
 
-
+        # Define the URL with job and location information
         url = "https://www.linkedin.com/jobs/{0}-jobs-{1}?keywords={2}&location={3}&locationId=&geoId={4}&f_TPR=r86400&distance=25&position=1&pageNum=0".format(job_name.lower().replace(" ", "-"), country_name.lower().replace(" ", "-"), job_url, country_url, geoId)
 
-        # Creating a webdriver instance
+        # Create a webdriver instance
         browser = webdriver.Firefox()
 
-        # Opening the url we have just defined in our browser
+        # Open the URL in the browser
         browser.get(url)
 
-        #We find how many jobs are offered.1000
+        # Find the number of jobs available
         jobs_num = browser.find_element(By.CSS_SELECTOR,"h1>span").get_attribute("innerText")
         if len(jobs_num.split(',')) > 1:
             jobs_num = int(jobs_num.split(',')[0])*1000
         else:
             jobs_num = int(jobs_num)
-
         jobs_num   = int(jobs_num)
 
-        #We create a while loop to browse all jobs. 
+        # Scroll down to the end of the page to load all job postings
         i = 2
         while i <= int(jobs_num/2)+1:
-            #We keep scrollind down to the end of the view.
             browser.execute_script("window.scrollTo(0, document.body.scrollHeight);")
             i = i + 1
             print("Current at: ", i, "Percentage at: ", ((i+1)/(int(jobs_num/2)+1))*100, "%",end="\r")
             try:
-                #We try to click on the load more results buttons in case it is already displayed.
+                # If there is a "Load more results" button, click it
                 infinite_scroller_button = browser.find_element(By.XPATH, ".//button[@aria-label='Load more results']")
                 infinite_scroller_button.click()
                 time.sleep(0.1)
             except:
-                #If there is no button, there will be an error, so we keep scrolling down.
+                # If there is no "Load more results" button, just keep scrolling down
                 time.sleep(0.1)
                 pass
-
 
         #We get a list containing all jobs that we have found.
         job_lists = browser.find_element(By.CLASS_NAME,"jobs-search__results-list")
